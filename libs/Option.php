@@ -119,7 +119,7 @@ class Option
      *
      * @return  string                          Help text.
      */
-    public function getHelp = function()
+    public function getHelp()
     {
         return $this->settings['help'];
     }

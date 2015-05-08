@@ -475,7 +475,7 @@ class Command {
             do {
                 $subcommand->parse($args);
 
-                if ((arg = array_shift($args))) {
+                if (($arg = array_shift($args))) {
                     if (!($subcommand = $this->getCommand($arg))) {
                         // argument does not belong to a subcommand registered at this level
                         array_unshift($args, $arg);
@@ -483,7 +483,7 @@ class Command {
                     }
                 } else {
                     // no more arguments
-                    break
+                    break;
                 }
             } while(true);
         }

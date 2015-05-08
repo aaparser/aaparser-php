@@ -186,7 +186,7 @@ class Operand
      *
      * @param   mixed           $value          Value to add.
      */
-    public function update(value)
+    public function update($value)
     {
         ++$this->index;
 

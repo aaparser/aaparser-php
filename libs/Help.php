@@ -65,7 +65,7 @@ class Help
         if ($minmax[1] == INF) {
             $usage[] = '[' . $operand->getVariable() . ' ...]';
         } elseif ($minmax[0] == 0) {
-            $usage[] = '[' . $operand->getVariable() . ']');
+            $usage[] = '[' . $operand->getVariable() . ']';
         }
 
         return implode(' ', $usage);
@@ -104,7 +104,7 @@ class Help
 
         // render usage summary
         $cmd = $command;
-        $tree = []
+        $tree = [];
 
         do {
             array_unshift($tree, $cmd->getName());
@@ -143,14 +143,14 @@ class Help
             foreach ($commands->getOptions() as $option) {
                 print "    " . implode(' | ', $option->getFlags()) . "\n";
                 print $indent . rtrim(wordwrap($option->getHelp(), 78, "\n" . $indent)) . "\n";
-            });
+            }
         }
 
         if ($command.hasOperands()) {
             print "Operands:\n";
 
             foreach ($command->getOperands() as $operand) {
-                print "    " . $operand->getName()) . "\n";
+                print "    " . $operand->getName() . "\n";
                 print $indent . rtrim(wordwrap($operand->getHelp(), 78, "\n" . $indent)) . "\n";
             }
         }

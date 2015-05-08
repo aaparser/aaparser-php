@@ -27,14 +27,14 @@ class Coercion
         $collection[] = $value;
 
         return $collection;
-    },
+    }
 
     /**
      * Increase a counter.
      */
     public static function count($value, $total = 0) {
         return $total += $value;
-    },
+    }
 
     /**
      * Build a key/value with values provided.
@@ -45,14 +45,14 @@ class Coercion
         $collection[$kv[0]] = $kv[1];
 
         return $collection;
-    },
+    }
 
     /**
      * Split a value by ','.
      */
-    public static function list($value) {
+    public static function listing($value) {
         return preg_split('/\s*,\s*/', $value);
-    },
+    }
 
     /**
      * Build a range of numbers.
@@ -61,7 +61,7 @@ class Coercion
         $lh = explode('..', $value);
         
         return range($lh[0], $lh[1]);
-    },
+    }
 
     /**
      * Just store the value.

@@ -136,7 +136,7 @@ class Command {
     {
         $instance = new static($name, $this, $settings);
 
-        $this->commands[] = $instance;
+        $this->commands[$name] = $instance;
 
         return $instance;
     }
@@ -193,7 +193,7 @@ class Command {
      */
     public function getCommands()
     {
-        return $this->commands;
+        return array_values($this->commands);
     }
 
     /**
@@ -204,316 +204,288 @@ class Command {
      */
     public function getCommand($name)
     {
-        if ()
+        return (isset($this->commands[$name])
+                ? $this->commands[$name]
+                : false);
     }
-}
-
-/**
- * Lookup a defined command.
- *
- * @param   string                      $name           Name of command.
- * @return  \Aaparser\Command|bool                      Returns the command instance or 'false' if no command was found.
- */
-command.prototype.getCommand = function(name)
-{
-    var ret = false;
-
-    for (var i = 0, cnt = this.commands.length; i < cnt; ++i) {
-        if (this.commands[i].getName() === name) {
-            ret = this.commands[i];
-            break;
+    
+    /**
+     * Test if command has defined operands.
+     *
+     * @return  bool                            Returns true, if command has operands.
+     */
+    public function hasOperands()
+    {
+        return (count($this->operands) > 0);
+    }
+    
+    /**
+     * Return all defined operands.
+     * 
+     * @return  array                           Operands.
+     */
+    public function getOperands()
+    {
+        return $this->operands;
+    }
+    
+    /**
+     * Test if command has defined options.
+     * 
+     * @return  bool                            Returns true, if command has options.
+     */
+    public function hasOptions()
+    {
+        return (count($this->options) > 0);
+    }
+    
+    /**
+     * Return all defined options.
+     * 
+     * @return  array                           Options.
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+    
+    /**
+     * Lookup a defined option for a specified flag.
+     * 
+     * @param   string                  $flag       Option flag to lookup.
+     * @return  \Aaparser\Option|bool               Returns the option instance or 'false' if no option was found.
+     */
+    public function getOption($flag)
+    {
+        $instance = false;
+        
+        foreach ($this->options as $option) {
+            if ($option->isFlag($flag)) {
+                $instance = $option;
+                break;
+            }
+        }
+        
+        return $instance;
+    }
+    
+    /**
+     * Return min/max expected number of operands.
+     * 
+     * @return  array                           Min, max expected number of operands.
+     */
+    public function getMinMaxOperands()
+    {
+        $min = 0;
+        $max = 0;
+        
+        foreach ($this->operands as $operand) {
+            $mm = $operand->getExpected();
+            
+            $min += $mm[0];
+            
+            if ($max !== INF) {
+                if ($mm[1] === INF) {
+                    $max = INF;
+                } else {
+                    $max += $mm[1];
+                }
+            }
+        }
+        
+        return [$min, $max];
+    }
+    
+    /**
+     * Get remaining minimum number of operands expected.
+     * 
+     * @param   int         $n              Number of operand to begin with to calculate remaining minimum expected operands.
+     * @return  int                         Expected minimum remaining operands.
+     */
+    public function getMinRemaining($n)
+    {
+        $return = 0;
+        $operands = array_slice($this->operands, $n);
+        
+        foreach ($operands as $operand) {
+            $return += $operand->getExpected()[0];
         }
     }
+    
+    /**
+     * Process and validate operands.
+     *
+     * @param   array           &$args          Operandal arguments to validate.
+     * @return  object                          Validated arguments.
+     */
+    public function processOperands(array &$args)
+    {
+        $operand = null;
+        $ret = [];
+        $op = 0;
+        $minmax = $this->getMinMaxOperands();
 
-    return ret;
-}
-
-/**
- * Test if command has defined operands.
- *
- * @return  bool                            Returns true, if command has operands.
- */
-command.prototype.hasOperands = function()
-{
-    return this.operands.length > 0;
-}
-
-/**
- * Return all defined operands.
- *
- * @return  array                           Operands.
- */
-command.prototype.getOperands = function()
-{
-    return this.operands.slice(0);
-}
-
-/**
- * Test if command has defined options.
- *
- * @return  bool                            Returns true, if command has options.
- */
-command.prototype.hasOptions = function()
-{
-    return this.options.length > 0;
-}
-
-/**
- * Return all defined options.
- *
- * @return  array                           Options.
- */
-command.prototype.getOptions = function()
-{
-    return this.options.slice(0);
-}
-
-/**
- * Lookup a defined option for a specified flag.
- *
- * @param   string          flag            Option flag.
- * @return  Option|bool                     Returns the option instance or 'false' if no option was found.
- */
-command.prototype.getOption = function(flag)
-{
-    var ret = false;
-
-    for (var i = 0, cnt = this.options.length; i < cnt; ++i) {
-        if (this.options[i].isFlag(flag)) {
-            ret = this.options[i];
-            break;
+        if ($minmax[0] > count($args)) {
+            printf("not enough arguments -- available %d, expected %d\n", count($args), $minmax[0]);
+            exit(1);
+        } elseif ($minmax[1] !== INF && $minmax[1] < count($args)) {
+            printf("too many arguments -- available %d, expected %d\n", count($args), $minmax[1]);
+            exit(1);
         }
-    }
 
-    return ret;
-}
-
-/**
- * Return min/max expected number of operands
- *
- * @return  array                           Min, max expected number of operands.
- */
-command.prototype.getMinMaxOperands = function()
-{
-    var min = 0;
-    var max = 0;
-
-    this.operands.forEach(function(operand)  {
-        var mm = operand.getExpected();
-
-        min += mm[0];
-
-        if (max !== Infinity) {
-            if (mm[1] === Infinity) {
-                max = Infinity;
+        while (count($args) > 0) {
+            if (is_null($operand)) {
+                // fetch next operand
+                $operand = $this->operands[$op];
+                
+                $minmax = $operand->getExpected();
+                $name = $operand->getName();
+                
+                ++$op;
+                
+                $remaining = $this->getMinMaxRemaining($op);
+            }
+            
+            $cnt = (isset($ret[$name])
+                    ? count($ret[$name])
+                    : 0);
+            
+            if ($minmax[1] > $cnt || ($minmax[1] === INF && $remaining > count($args))) {
+                // expected operand
+                $arg = array_shift($args);
+                
+                if (!$operand->isValid($arg)) {
+                    printf("invalid value \"%s\" for operand\n", $arg);
+                    exit(1);
+                }
+                
+                $operand->update($arg);
+                
+                $ret[$name] = $operand->getData();
             } else {
-                max += mm[1];
+                // trigger fetching next operand
+                $operand = null;
             }
         }
-    });
 
-    return [min, max];
-}
-
-/**
- * Get remaining minimum number of operands expected.
- *
- * @param   int             n               Number of operand to begin with to calculate remaining minimum expected operands.
- */
-command.prototype.getMinRemaining = function(n)
-{
-    var ret = 0;
-
-    this.operands.slice(n).forEach(function(operand) {
-        ret += operand.getExpected()[0];
-    });
-
-    return ret;
-}
-
-/**
- * Process and validate operands.
- *
- * @param   array           args            Operandal arguments to validate.
- * @return  object                          Validated arguments.
- */
-command.prototype.processOperands = function(args)
-{
-    var name, remaining, cnt;
-
-    var operand = null;
-    var ret = {};
-    var op = 0;
-    var minmax = this.getMinMaxOperands();
-
-    if (minmax[0] > args.length) {
-        console.log('not enough arguments -- available ' + args.length + ', expected ' + minmax[0]);
-        process.exit(1);
-    } else if (minmax[1] !== Infinity && minmax[1] < args.length) {
-        console.log('too many arguments -- available ' + args.length + ', expected ' + minmax[1]);
-        process.exit(1);
+        return $ret;
     }
-
-    while (args.length > 0) {
-        if (operand === null) {
-            // fetch next operand
-            operand = this.operands[op];
-
-            minmax = operand.getExpected();
-            name = operand.getName();
-
-            ++op;
-
-            remaining = this.getMinRemaining(op);
-        }
-
-        cnt = (typeof ret[name] != 'undefined'
-                ? ret[name].length
-                : 0);
-
-        if (minmax[1] > cnt || (minmax[1] === Infinity && remaining > args.length)) {
-            // expected operand
-            arg = args.shift();
-
-            if (!operand.isValid(arg)) {
-                console.log('invalid value "' + arg + '" for operand');
-                process.exit(1);
+    
+    /**
+     * Parse arguments for command.
+     *
+     * @param   array            $args       Optional array of arguments.
+     */
+    public function parse(array $args = null)
+    {
+        $pargs = [];
+        $options = [];
+        $operands = [];
+        $literal = false;
+        $subcommand = null;
+        
+        array_map(function($option) use (&$options) {
+            $data = $option->getData();
+            
+            if (!is_null($data)) {
+                $options[$option->getName()] = $data;
             }
+        }, $this->options);
 
-            operand.update(arg);
-            ret[name] = operand.getData();
-        } else {
-            // trigger fetching next operand
-            operand = null;
-        }
-    }
+        $mm = $this->getMinMaxOperands();
 
-    return ret;
-}
-
-/**
- * Parse arguments for command.
- *
- * @param   array           argv            Array of arguments.
- */
-command.prototype.parse = function(argv)
-{
-    var arg, match, option;
-
-    var args = [];
-    var options = {};
-    var operands = {};
-    var literal = false;
-    var subcommand = null;
-
-    this.options.forEach(function(option) {
-        var data = option.getData();
-
-        if (data !== null) {
-            options[option.getName()] = data;
-        }
-    });
-
-    var mm = this.getMinMaxOperands();
-
-    while ((arg = argv.shift())) {
-        if (literal) {
-            args.push(arg);
-            continue;
-        }
-
-        if (arg == '--') {
-            // only operands following
-            literal = true;
-            continue;
-        }
-
-        if ((match = arg.match(/^(-[a-z0-9])([a-z0-9]*)()$/)) ||
-            (match = arg.match(/^(--[a-z][a-z0-9-]*)()(=.*|)$/i))) {
-            // option argument
-
-            if (match[3].length > 0) {
-                // push back value
-                argv.unshift(match[3].substring(1));
+        while (($arg = array_shift($args))) {
+            if ($literal) {
+                $pargs[] = $arg;
+                continue;
             }
-
-            if (!(option = this.getOption(match[1]))) {
-                // unknown option
-                console.log('unknown argument "' + match[1] + '"');
-                process.exit(1);
+            
+            if ($arg == '--') {
+                // only operands following
+                $literal = true;
+                continue;
             }
-
-            if (option.takesValue()) {
-                if ((arg = argv.shift())) {
-                    // value required
-                    if (!option.isValid(arg)) {
-                        console.log('invalid value for argument "' + match[1] + '"')
-                        process.exit(1);
+            
+            if (preg_match('/^(-[a-z0-9])([a-z0-9]*)()$/i', $arg, $match) || preg_match('/^(--[a-z][a-z0-9-]*)()(=.*|)$/i', $arg, $match)) {
+                // option argument
+                if ($match[3] !== '') {
+                    // push back value
+                    array_unshift($args, substr($match[3], 1));
+                }
+                
+                if (!($option = $this->getOption($match[1]))) {
+                    printf("unknown argument \"%s\"\n", $match[1]);
+                    exit(1);
+                }
+                
+                if ($option->takesValue()) {
+                    if (($arg = array_shift($args))) {
+                        // value required
+                        if (!$option->isValid($arg)) {
+                            printf("invalid value for argument \"%s\"\n", $match[1]);
+                            exit(1);
+                        } else {
+                            $option->update($arg);
+                            $option->callAction($arg);
+                        }
                     } else {
-                        option.update(arg);
-                        option.settings.action.call(option, arg);
+                        printf("value missing for argument \"\"\n", $match[1]);
+                        exit(1);
                     }
                 } else {
-                    console.log('value missing for argument "' + match[1] + '"');
-                    process.exit(1);
+                    $option->update();
+                    $option->callAction();
                 }
+                
+                $options[$option->getName()] = $option->getData();
+                
+                if ($match[2] !== '') {
+                    // push back combined short argument
+                    array_unshift($args, '-' . $match[2]);
+                }
+            } elseif (count($pargs) < $mm[1]) {
+                // expected operand
+                $pargs[] = $arg;
+            } elseif (($subcommand = $this->getCommand($arg))) {
+                // sub command
+                break;
             } else {
-                option.update();
-                option.settings.action.apply(option);
+                // no further arguments should be parsed
+                array_unshift($args, $arg);
+                break;
             }
+        }
 
-            // option.action(option.value);
-            options[option.getName()] = option.getData();
-
-            if (match[2].length > 0) {
-                // push back combined short argument
-                argv.unshift('-' + match[2]);
+        // check if all required options are available
+        foreach ($this->options as $option) {
+            if ($option->isRequired() && !isset($options[$option->getName()])) {
+                printf("required argument is missing \"%s\"\n", implode(' | ', $option->getFlags()));
+                exit(1);
             }
-        } else if (args.length < mm[1]) {
-            // expected operand
-            args.push(arg);
-        } else if ((subcommand = this.getCommand(arg))) {
-            // sub command
-            break;
-        } else {
-            // no further arguments should be parsed
-            argv.unshift(arg);
-            break;
         }
-    }
+        
+        // parse operands
+        $operands = $this->processOperands($pargs);
 
-    // check if all required options are available
-    this.options.forEach(function(option) {
-        if (option.isRequired() && !(option.getName() in options)) {
-            console.log('required argument is missing "' + option.getFlags().join(' | ') + '"');
-            process.exit(1);
-        }
-    });
+        // action callback for command
+        $this->settings['action']($options, $operands);
 
-    // parse operands
-    operands = this.processOperands(args);
+        // there's a subcommand to be called
+        if (!is_null($subcommand)) {
+            do {
+                $subcommand->parse($args);
 
-    // action callback for operator
-    this.settings.action.call(this, options, operands);
-
-    // there's a subcommand to be called
-    if (subcommand !== null) {
-        do {
-            subcommand.parse(argv);
-
-            if ((arg = argv.shift())) {
-                if (!(subcommand = this.getCommand(arg))) {
-                    // argument does not belong to a subcommand registered at this level
-                    argv.unshift(arg);
+                if (($arg = array_shift($args))) {
+                    if (!($subcommand = $this->getCommand($arg))) {
+                        // argument does not belong to a subcommand registered at this level
+                        array_unshift($args, $arg);
+                        break;
+                    }
+                } else {
+                    // no more arguments
                     break;
                 }
-            } else {
-                // no more arguments
-                break
-            }
-        } while(true);
+            } while(true);
+        }
     }
 }
-
-// export
-module.exports = command;

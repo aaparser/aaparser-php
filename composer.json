@@ -1,9 +1,9 @@
 {
-    "name":         "octris/aaparser",
+    "name":         "aaparser/aaparser-php",
     "type":         "library",
     "description":  "another argument parser for PHP",
     "keywords":     ["command", "cli", "option", "argument", "parser"],
-    "homepage":     "https://github.com/octris/aaparser",
+    "homepage":     "https://github.com/aaparser/aaparser-php",
     "license":      "BSD-3-Clause",
 
     "authors":      [{
@@ -17,7 +17,7 @@
 
     "autoload":     {
         "psr-4":        {
-            "octris\\{{$package}\\": "libs/"
+            "Aaparser\\": "libs/"
         }
     }
 }

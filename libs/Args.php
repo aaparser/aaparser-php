@@ -85,7 +85,7 @@ class Args extends \Aaparser\Command
      */
     public function printHelp($command = '')
     {
-        \Aaparser\printHelp($command);
+        \Aaparser\Help::printHelp($command);
 
         exit(1);
     }
@@ -120,6 +120,8 @@ class Args extends \Aaparser\Command
                 ]
             );
         }
+
+        return parent::addCommand($name, $settings);
     }
 
     /**

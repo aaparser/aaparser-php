@@ -63,6 +63,16 @@ class Args extends \Aaparser\Command
     }
 
     /**
+     * Return application version.
+     *
+     * @return  string                      Application version.
+     */
+    public function getVersion()
+    {
+        return $this->settings['version'];
+    }
+
+    /**
      * Print version.
      */
     public function printVersion()

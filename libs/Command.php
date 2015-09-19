@@ -208,7 +208,7 @@ class Command {
                 ? $this->commands[$name]
                 : false);
     }
-    
+
     /**
      * Test if command has defined operands.
      *
@@ -218,72 +218,72 @@ class Command {
     {
         return (count($this->operands) > 0);
     }
-    
+
     /**
      * Return all defined operands.
-     * 
+     *
      * @return  array                           Operands.
      */
     public function getOperands()
     {
         return $this->operands;
     }
-    
+
     /**
      * Test if command has defined options.
-     * 
+     *
      * @return  bool                            Returns true, if command has options.
      */
     public function hasOptions()
     {
         return (count($this->options) > 0);
     }
-    
+
     /**
      * Return all defined options.
-     * 
+     *
      * @return  array                           Options.
      */
     public function getOptions()
     {
         return $this->options;
     }
-    
+
     /**
      * Lookup a defined option for a specified flag.
-     * 
+     *
      * @param   string                  $flag       Option flag to lookup.
      * @return  \Aaparser\Option|bool               Returns the option instance or 'false' if no option was found.
      */
     public function getOption($flag)
     {
         $instance = false;
-        
+
         foreach ($this->options as $option) {
             if ($option->isFlag($flag)) {
                 $instance = $option;
                 break;
             }
         }
-        
+
         return $instance;
     }
-    
+
     /**
      * Return min/max expected number of operands.
-     * 
+     *
      * @return  array                           Min, max expected number of operands.
      */
     public function getMinMaxOperands()
     {
         $min = 0;
         $max = 0;
-        
+
         foreach ($this->operands as $operand) {
             $mm = $operand->getExpected();
-            
+
             $min += $mm[0];
-            
+
             if ($max !== INF) {
                 if ($mm[1] === INF) {
                     $max = INF;
@@ -292,13 +292,13 @@ class Command {
                 }
             }
         }
-        
+
         return [$min, $max];
     }
-    
+
     /**
      * Get remaining minimum number of operands expected.
-     * 
+     *
      * @param   int         $n              Number of operand to begin with to calculate remaining minimum expected operands.
      * @return  int                         Expected minimum remaining operands.
      */
@@ -306,12 +306,12 @@ class Command {
     {
         $return = 0;
         $operands = array_slice($this->operands, $n);
-        
+
         foreach ($operands as $operand) {
             $return += $operand->getExpected()[0];
         }
     }
-    
+
     /**
      * Process and validate operands.
      *
@@ -337,30 +337,30 @@ class Command {
             if (is_null($operand)) {
                 // fetch next operand
                 $operand = $this->operands[$op];
-                
+
                 $minmax = $operand->getExpected();
                 $name = $operand->getName();
-                
+
                 ++$op;
-                
+
                 $remaining = $this->getMinMaxRemaining($op);
             }
-            
+
             $cnt = (isset($ret[$name])
                     ? count($ret[$name])
                     : 0);
-            
+
             if ($minmax[1] > $cnt || ($minmax[1] === INF && $remaining > count($args))) {
                 // expected operand
                 $arg = array_shift($args);
-                
+
                 if (!$operand->isValid($arg)) {
                     printf("invalid value \"%s\" for operand\n", $arg);
                     exit(1);
                 }
-                
+
                 $operand->update($arg);
-                
+
                 $ret[$name] = $operand->getData();
             } else {
                 // trigger fetching next operand
@@ -370,7 +370,7 @@ class Command {
 
         return $ret;
     }
-    
+
     /**
      * Parse arguments for command.
      *
@@ -383,10 +383,10 @@ class Command {
         $operands = [];
         $literal = false;
         $subcommand = null;
-        
+
         array_map(function($option) use (&$options) {
             $data = $option->getData();
-            
+
             if (!is_null($data)) {
                 $options[$option->getName()] = $data;
             }
@@ -399,25 +399,25 @@ class Command {
                 $pargs[] = $arg;
                 continue;
             }
-            
+
             if ($arg == '--') {
                 // only operands following
                 $literal = true;
                 continue;
             }
-            
+
             if (preg_match('/^(-[a-z0-9])([a-z0-9]*)()$/i', $arg, $match) || preg_match('/^(--[a-z][a-z0-9-]*)()(=.*|)$/i', $arg, $match)) {
                 // option argument
                 if ($match[3] !== '') {
                     // push back value
                     array_unshift($args, substr($match[3], 1));
                 }
-                
+
                 if (!($option = $this->getOption($match[1]))) {
                     printf("unknown argument \"%s\"\n", $match[1]);
                     exit(1);
                 }
-                
+
                 if ($option->takesValue()) {
                     if (($arg = array_shift($args))) {
                         // value required
@@ -436,9 +436,9 @@ class Command {
                     $option->update();
                     $option->callAction();
                 }
-                
+
                 $options[$option->getName()] = $option->getData();
-                
+
                 if ($match[2] !== '') {
                     // push back combined short argument
                     array_unshift($args, '-' . $match[2]);
@@ -463,7 +463,7 @@ class Command {
                 exit(1);
             }
         }
-        
+
         // parse operands
         $operands = $this->processOperands($pargs);
 
@@ -489,5 +489,7 @@ class Command {
                 }
             } while(true);
         }
+
+        return $args;
     }
 }

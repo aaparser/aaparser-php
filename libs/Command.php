@@ -468,7 +468,7 @@ class Command {
         $operands = $this->processOperands($pargs);
 
         // action callback for command
-        if (is_callable($this->settings['action'])) {
+        if (isset($this->settings['action']) && is_callable($this->settings['action'])) {
             $this->settings['action']($options, $operands);
         }
 

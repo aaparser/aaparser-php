@@ -468,7 +468,9 @@ class Command {
         $operands = $this->processOperands($pargs);
 
         // action callback for command
-        $this->settings['action']($options, $operands);
+        if (is_callable($this->settings['action'])) {
+            $this->settings['action']($options, $operands);
+        }
 
         // there's a subcommand to be called
         if (!is_null($subcommand)) {

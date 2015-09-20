@@ -32,7 +32,7 @@ class Args extends \Aaparser\Command
         $settings = $settings + [
             'name' => $name,
             'version' => '0.0.0',
-            'version_string' => '${name} ${version}'
+            'version_string' => "\${name} \${version}\n"
         ];
 
         parent::__construct($name, null, $settings);

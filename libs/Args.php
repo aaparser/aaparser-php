@@ -77,7 +77,7 @@ class Args extends \Aaparser\Command
      */
     public function printVersion()
     {
-        print preg_replace_callback('/${(^+?)}/', function($match) {
+        print preg_replace_callback('/\${(.+?)}/', function($match) {
             if (isset($this->settings[$match[1]])) {
                 $return = $this->settings[$match[1]];
             } else {
@@ -85,7 +85,7 @@ class Args extends \Aaparser\Command
             }
 
             return $return;
-        });
+        }, $this->settings['version_string']);
     }
 
     /**
@@ -144,7 +144,7 @@ class Args extends \Aaparser\Command
         global $argv;
 
         if (is_null($args)) {
-            $args = array_slice($argv, 2);
+            $args = array_slice($argv, 1);
         }
 
         $args = parent::parse($args);

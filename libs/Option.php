@@ -25,14 +25,14 @@ class Option
      * @type    string
      */
     protected $name;
-    
+
     /**
      * Data of option.
      *
      * @type    mixed
      */
     protected $data = null;
-    
+
     /**
      * Option flags.
      *
@@ -46,28 +46,28 @@ class Option
      * @type    mixed
      */
     protected $coercion;
-    
+
     /**
      * Variable name of option.
      *
      * @type    mixed
      */
     protected $variable = null;
-    
+
     /**
      * Option validators.
      *
      * @type    array
      */
     protected $validators = array();
-    
+
     /**
      * Option settings.
      *
      * @type    array
      */
     protected $settings;
-    
+
     /**
      * Constructor.
      *
@@ -85,7 +85,7 @@ class Option
             'required' => false,
             'action' => function() {}
         ];
-        
+
         $this->name = $name;
         $this->coercion = $coercion;
 
@@ -166,7 +166,7 @@ class Option
 
     /**
      * Call action callback.
-     * 
+     *
      * @param   mixed           $value          Optional value for action callback.
      */
     public function callAction($value = null)
@@ -202,7 +202,7 @@ class Option
      */
     public function isFlag($flag)
     {
-        return (in_array($this->flags, $flag));
+        return (in_array($flag, $this->flags));
     }
 
     /**

@@ -487,7 +487,7 @@ class Command {
         // there's a subcommand to be called
         if (!is_null($subcommand)) {
             do {
-                $subcommand->parse($args);
+                $args = $subcommand->parse($args);
 
                 if (($arg = array_shift($args))) {
                     if (!($subcommand = $this->getCommand($arg))) {

@@ -156,7 +156,7 @@ class Args extends \Aaparser\Command
         $args = parent::parse($args);
 
         if (!is_null($arg = array_shift($args))) {
-            print 'too many arguments for "' . $arg . '"';
+            printf("too many arguments at \"%s\"\n", $arg);
 
             exit(1);
         }

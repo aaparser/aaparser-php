@@ -112,7 +112,7 @@ class Help
             $cmd = $cmd->getParent();
         } while (!is_null($cmd));
 
-        $usage = self::getUsage(command);
+        $usage = self::getUsage($command);
         $buffer = rtrim('usage: ' . array_shift($tree) . ' ' . implode(' [ARGUMENTS] ', $tree)) . ' ';
         $len = strlen($buffer);
 
@@ -121,11 +121,11 @@ class Help
                 $buffer .= $u .' ';
             } else {
                 print $buffer . "\n";
-                
+
                 $buffer = str_repeat(' ', $len) . $u . ' ';
             }
         }
-        
+
         if (strlen($buffer) > $len) {
             print $buffer . "\n";
         }
@@ -137,16 +137,16 @@ class Help
             print "\n";
         }
 
-        if ($command.hasOptions()) {
+        if ($command->hasOptions()) {
             print "Options:\n";
 
-            foreach ($commands->getOptions() as $option) {
+            foreach ($command->getOptions() as $option) {
                 print "    " . implode(' | ', $option->getFlags()) . "\n";
                 print $indent . rtrim(wordwrap($option->getHelp(), 78, "\n" . $indent)) . "\n";
             }
         }
 
-        if ($command.hasOperands()) {
+        if ($command->hasOperands()) {
             print "Operands:\n";
 
             foreach ($command->getOperands() as $operand) {
@@ -163,16 +163,16 @@ class Help
                 $command->getCommands(),
                 function($size, $cmd) use (&$commands) {
                     $name = $cmd->getName();
-                    
+
                     $commands[$name] = $cmd;
-                    
+
                     return Math.max($size, strlen($name));
                 },
                 0
             );
 
             ksort($commands);
-            
+
             foreach ($commands as $name => $command) {
                 printf("    %-" . $size . "%    %s\n", $name, $command->getHelp());
             }

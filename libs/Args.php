@@ -91,11 +91,17 @@ class Args extends \Aaparser\Command
     /**
      * Print help.
      *
-     * @param   string          $command        Optional command to print help for.
+     * @param   string              $command        Optional command to print help for.
      */
-    public function printHelp($command = '')
+    public function printHelp($command = null)
     {
-        \Aaparser\Help::printHelp($command);
+        if (is_null($command) || !$this->hasCommand($command)) {
+            $instance = $this;
+        } else {
+            $instance = $this->getCommand($command);
+        }
+
+        \Aaparser\Help::printHelp($instance);
 
         exit(1);
     }
@@ -109,7 +115,7 @@ class Args extends \Aaparser\Command
      */
     public function addCommand($name, array $settings = array())
     {
-        if ($name != 'help') {
+        if ($name != 'help' && !$this->hasCommand($name)) {
             // add implicit help command
             $cmd = parent::addCommand(
                 'help',

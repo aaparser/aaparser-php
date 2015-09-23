@@ -187,6 +187,17 @@ class Command {
     }
 
     /**
+     * Test if command with specified name exists.
+     *
+     * @param   string                  $name           Name of command.
+     * @return  bool                                    Returns true, if specified command exists.
+     */
+    public function hasCommand($name)
+    {
+        return (isset($this->commands[$name]));
+    }
+
+    /**
      * Return all defined subcommands.
      *
      * @return  array                       Commands.
@@ -446,8 +457,9 @@ class Command {
             } elseif (count($pargs) < $mm[1]) {
                 // expected operand
                 $pargs[] = $arg;
-            } elseif (($subcommand = $this->getCommand($arg))) {
+            } elseif ($this->hasCommand($arg)) {
                 // sub command
+                $subcommand = $this->getCommand($arg);
                 break;
             } else {
                 // no further arguments should be parsed

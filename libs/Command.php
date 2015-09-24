@@ -136,7 +136,7 @@ class Command {
      */
     public function addCommand($name, array $settings = array())
     {
-        $instance = new static($name, $this, $settings);
+        $instance = new Command($name, $this, $settings);
 
         $this->commands[$name] = $instance;
 

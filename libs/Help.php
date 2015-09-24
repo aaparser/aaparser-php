@@ -171,7 +171,7 @@ class Help
 
                     $commands[$name] = $cmd;
 
-                    return Math.max($size, strlen($name));
+                    return max($size, strlen($name));
                 },
                 0
             );
@@ -179,7 +179,7 @@ class Help
             ksort($commands);
 
             foreach ($commands as $name => $command) {
-                printf("    %-" . $size . "%    %s\n", $name, $command->getHelp());
+                printf("    %-" . $size . "s    %s\n", $name, $command->getHelp());
             }
         }
     }

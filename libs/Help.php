@@ -78,7 +78,12 @@ class Help
     {
         $usage = [];
 
-        foreach ($command->getOptions() as $option) {
+        $options = $command->getOptions();
+        usort($options, function($a, $b) {
+            return strcasecmp(ltrim($a->getFlags()[0], '-'), ltrim($b->getFlags()[0], '-'));
+        });
+
+        foreach ($options as $option) {
             $usage[] = self::getOptionUsage($option);
         }
 

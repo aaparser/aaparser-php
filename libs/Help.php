@@ -140,7 +140,12 @@ class Help
         if ($command->hasOptions()) {
             print "Options:\n";
 
-            foreach ($command->getOptions() as $option) {
+            $options = $command->getOptions();
+            usort($options, function($a, $b) {
+                return strcasecmp(ltrim($a->getFlags()[0], '-'), ltrim($b->getFlags()[0], '-'));
+            });
+
+            foreach ($options as $option) {
                 print "    " . implode(' | ', $option->getFlags()) . "\n";
                 print $indent . rtrim(wordwrap($option->getHelp(), 78, "\n" . $indent)) . "\n";
             }

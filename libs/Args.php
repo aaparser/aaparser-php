@@ -47,6 +47,16 @@ class Args extends \Aaparser\Command
         )->setAction(function() {
             $this->printVersion();
         });
+        $this->addOption(
+            'help',
+            '-h | --help',
+            true,
+            [
+                'help' => 'Print help information.'
+            ]
+        )->setAction(function() {
+            $this->printHelp();
+        });
     }
 
     /**

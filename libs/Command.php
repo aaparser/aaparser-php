@@ -92,7 +92,9 @@ class Command {
      */
     public function getHelp()
     {
-        return $this->settings['help'];
+        return (isset($this->settings['help'])
+                ? $this->settings['help']
+                : '');
     }
 
     /**

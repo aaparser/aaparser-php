@@ -100,8 +100,6 @@ class Help
      */
     public static function printHelp($command)
     {
-        // collect
-
         // render usage summary
         $cmd = $command;
         $tree = [];
@@ -133,12 +131,8 @@ class Help
         // render lists of available options, operands and subcommands
         $indent = str_repeat(' ', 10);
 
-        if ($command->hasOptions() || $command->hasOperands() || $command->hasCommands()) {
-            print "\n";
-        }
-
         if ($command->hasOptions()) {
-            print "Options:\n";
+            print "\nOptions:\n";
 
             $options = $command->getOptions();
             usort($options, function($a, $b) {
@@ -152,7 +146,7 @@ class Help
         }
 
         if ($command->hasOperands()) {
-            print "Operands:\n";
+            print "\nOperands:\n";
 
             foreach ($command->getOperands() as $operand) {
                 print "    " . $operand->getName() . "\n";
@@ -161,7 +155,7 @@ class Help
         }
 
         if ($command->hasCommands()) {
-            print "Commands:\n";
+            print "\nCommands:\n";
 
             $commands = [];
             $size = array_reduce(

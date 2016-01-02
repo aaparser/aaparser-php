@@ -32,7 +32,8 @@ class Args extends \Aaparser\Command
         $settings = $settings + [
             'name' => $name,
             'version' => '0.0.0',
-            'version_string' => "\${name} \${version}\n"
+            'version_string' => "\${name} \${version}\n",
+            'default_action' => function() {}
         ];
 
         parent::__construct($name, null, $settings);
@@ -117,6 +118,17 @@ class Args extends \Aaparser\Command
     }
 
     /**
+     * Set default action that is called, when no command line arguments are privided and no
+     * error occured after argument processing.
+     *
+     * @param   callable            $fn             Function to call.
+     */
+    public function setDefaultAction(callable $fn)
+    {
+        $this->settings['default_action'] = $fn;
+    }
+
+    /**
      * Define a new command.
      *
      * @param   string              $name           Name of command.
@@ -163,7 +175,14 @@ class Args extends \Aaparser\Command
             $args = array_slice($argv, 1);
         }
 
+        $cnt = count($args);
+
         $args = parent::parse($args);
+
+        if ($cnt == 0) {
+            $fn = $this->settings['default_action'];
+            $fn();
+        }
 
         if (!is_null($arg = array_shift($args))) {
             printf("too many arguments at \"%s\"\n", $arg);

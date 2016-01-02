@@ -142,7 +142,7 @@ class Args extends \Aaparser\Command
             $cmd = parent::addCommand(
                 'help',
                 [
-                    'help' => 'Help',
+                    'help' => 'Display help for a subcommand.',
                     'action' => function(array $options, array $operands) {
                         if (isset($operands['command'])) {
                             // resolve actual command

@@ -253,7 +253,7 @@ class Option
     {
         if (is_callable($this->coercion)) {
             $cb = $this->coercion;
-            $cb($value, $this->data, $this->settings['default']);
+            $this->data = $cb($value, $this->data, $this->settings['default']);
         } else {
             $this->data = $this->coercion;
         }

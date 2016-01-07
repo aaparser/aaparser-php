@@ -261,17 +261,26 @@ class Option
     }
 
     /**
-     * Update option value.
+     * Coerce value according to configured coercion function.
      *
      * @param   mixed           $value          Optional value to set (ignored for 'type' == 'count' and 'type' == 'bool').
+     * @return  mixed                           Coerced value.
+     */
+    public function coerce($value)
+    {
+        $cb = $this->coercion;
+
+        return $cb($value, $this->settings['default']);
+    }
+
+    /**
+     * Update option value.
+     *
+     * @param   mixed           $value          Optional value to set. The resulting value depends on the coercion type defined.
      */
     public function update($value = null)
     {
-        if (is_callable($this->coercion)) {
-            $cb = $this->coercion;
-            $this->data = $cb($value, $this->data, $this->settings['default']);
-        } else {
-            $this->data = $this->coercion;
-        }
+        $cb = $this->coercion;
+        $this->data = $cb($value, (is_null($this->data) ? $this->settings['default'] : $this->data));
     }
 }

@@ -119,7 +119,7 @@ class Operand
      */
     public function getVariable()
     {
-        return $his->settings['variable'];
+        return $this->settings['variable'];
     }
 
     /**

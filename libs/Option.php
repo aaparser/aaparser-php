@@ -99,7 +99,7 @@ class Option
                                     ? $this->settings['variable']
                                     : $match[1]);
             } else {
-                throw new \Exception('unexpected string "' + $part + '"');
+                throw new \Exception('unexpected string "' . $part . '"');
             }
         }
     }

@@ -22,8 +22,12 @@ class Coercion
     /**
      * Build a collection (array) of values.
      */
-    public static function collect($value, array $collection = array())
+    public static function collect($value, array $collection = null)
     {
+        if (is_null($collection)) {
+            $collection = array();
+        }
+
         $collection[] = $value;
 
         return $collection;
@@ -32,7 +36,11 @@ class Coercion
     /**
      * Increase a counter.
      */
-    public static function count($value, $total = 0) {
+    public static function count($value, $total = null) {
+        if (is_null($total)) {
+            $total = 0;
+        }
+
         return $total += $value;
     }
 
@@ -43,10 +51,10 @@ class Coercion
         if (is_null($collection)) {
             $collection = array();
         }
-        
+
         $kv = explode('=', $value);
 
-        $collection[$kv[0]] = $kv[1];
+        $collection[$kv[0]] = (isset($kv[1]) ? $kv[1] : null);
 
         return $collection;
     }
@@ -63,7 +71,7 @@ class Coercion
      */
     public static function range($value) {
         $lh = explode('..', $value);
-        
+
         return range($lh[0], $lh[1]);
     }
 

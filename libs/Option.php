@@ -113,7 +113,7 @@ class Option
     public function setHelp($str)
     {
         $this->settings['help'] = $str;
-        
+
         return $this;
     }
 
@@ -166,7 +166,7 @@ class Option
     public function setAction($cb)
     {
         $this->settings['action'] = $cb;
-        
+
         return $this;
     }
 
@@ -184,12 +184,16 @@ class Option
      * Add a value validator. This has only effect for options that require a value.
      *
      * @param   callable        $cb             Validation callback.
+     * @param   string          $errstr         Optional error string to print if validation fails.
      * @return  \Aaparser\Option                Instance for method chaining.
      */
-    public function addValidator($cb)
+    public function addValidator($cb, $errstr = '')
     {
-        $this->validators[] = $cb;
-        
+        $this->validators[] = [
+            'fn' => $cb,
+            'errstr' => $errstr
+        ];
+
         return $this;
     }
 
@@ -218,19 +222,20 @@ class Option
      * Validate the value of an option.
      *
      * @param   mixed           $value          Value to validate.
-     * @return  bool                            Returns true if the value is valid or if no validators are available.
+     * @return  array                           Returns an array in the form [is_valid, errstr].
      */
     public function isValid($value)
     {
-        $is_valid = true;
+        $return = [true, ''];
 
         foreach ($this->validators as $validator) {
-            if (!($is_valid = $validator($value))) {
+            if (!$validator($value)) {
+                $return = [false, $validator['errstr']];
                 break;
             }
         }
 
-        return $is_valid;
+        return $return;
     }
 
     /**

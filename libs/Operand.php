@@ -25,35 +25,35 @@ class Operand
      * @type    array
      */
     protected $settings;
- 
+
     /**
      * Operand index.
      *
      * @type    int
      */
     protected $index = 0;
-    
+
     /**
      * Operand data.
      *
      * @type    mixed
      */
     protected $data;
- 
+
     /**
      * Operand validators.
      *
      * @type    array
      */
     protected $validators = array();
-    
+
     /**
      * Number of arguments.
      *
      * @type    int|string
      */
     protected $num;
-    
+
     /**
      * Constructor.
      *
@@ -91,7 +91,7 @@ class Operand
     public function setHelp($str)
     {
         $this->settings['help'] = $str;
-        
+
         return $this;
     }
 
@@ -149,12 +149,16 @@ class Operand
      * Add a value validator. This has only effect for options that require a value.
      *
      * @param   callable        $cb             Validation callback.
+     * @param   string          $errstr         Optional error string to print if validation fails.
      * @return  \Aaparser\Operand               Instance for method chaining.
      */
-    public function addValidator($cb)
+    public function addValidator($cb, $errstr = '')
     {
-        $this->validators[] = $cb;
-        
+        $this->validators[] = [
+            'fn' => $cb,
+            'errstr' => $errstr
+        ];
+
         return $this;
     }
 
@@ -162,19 +166,20 @@ class Operand
      * Validate the value of an operand.
      *
      * @param   mixed           $value          Value to validate.
-     * @return  bool                            Returns true if the value is valid or if no validators are available.
+     * @return  array                           Returns an array in the form [is_valid, errstr].
      */
     public function isValid($value)
     {
-        $is_valid = true;
+        $return = [true, ''];
 
         foreach ($this->validators as $validator) {
-            if (!($is_valid = $validator($value))) {
+            if (!$validator['fn']($value)) {
+                $return = [false, $validator['errstr']];
                 break;
             }
         }
 
-        return $is_valid;
+        return $return;
     }
 
     /**

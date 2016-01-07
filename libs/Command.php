@@ -84,7 +84,7 @@ class Command {
     public function setHelp($str)
     {
         $this->settings['help'] = $str;
-        
+
         return $this;
     }
 
@@ -129,7 +129,7 @@ class Command {
     public function setAction(callable $cb)
     {
         $this->settings['action'] = $cb;
-        
+
         return $this;
     }
 
@@ -373,8 +373,15 @@ class Command {
                 // expected operand
                 $arg = array_shift($args);
 
-                if (!$operand->isValid($arg)) {
+                list($is_valid, $errstr) = $operand->isValid($arg);
+
+                if (!$is_valid) {
                     printf("invalid value \"%s\" for operand\n", $arg);
+
+                    if ($errstr) {
+                        print preg_replace('/\$\{value\}/', $arg, $errstr) . "\n";
+                    }
+
                     exit(1);
                 }
 
@@ -440,8 +447,15 @@ class Command {
                 if ($option->takesValue()) {
                     if (($arg = array_shift($args))) {
                         // value required
-                        if (!$option->isValid($arg)) {
+                        list($is_valid, $errstr) = $option->isValid($arg);
+
+                        if (!$is_valid) {
                             printf("invalid value for argument \"%s\"\n", $match[1]);
+
+                            if ($errstr) {
+                                print preg_replace('/\$\{value\}/', $arg, $errstr) . "\n";
+                            }
+
                             exit(1);
                         } else {
                             $option->update($arg);

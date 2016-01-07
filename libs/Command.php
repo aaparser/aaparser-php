@@ -79,7 +79,7 @@ class Command {
      * Set help text.
      *
      * @param   string      $str            Help text.
-     * @return  \Aaparser\Operand           Instance for method chaining.
+     * @return  \Aaparser\Command           Instance for method chaining.
      */
     public function setHelp($str)
     {
@@ -124,7 +124,7 @@ class Command {
      * Set action to call if command appears in arguments.
      *
      * @param   callable    $cb             Callback to call.
-     * @return  \Aaparser\Operand           Instance for method chaining.
+     * @return  \Aaparser\Command           Instance for method chaining.
      */
     public function setAction(callable $cb)
     {

@@ -229,7 +229,7 @@ class Option
         $return = [true, ''];
 
         foreach ($this->validators as $validator) {
-            if (!$validator($value)) {
+            if (!$validator['fn']($value)) {
                 $return = [false, $validator['errstr']];
                 break;
             }

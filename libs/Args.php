@@ -145,10 +145,18 @@ class Args extends \Aaparser\Command
                         $command = $this;
                         
                         if (isset($operands['command'])) {
-                            if (!($command = $this->getCommand($operands['command'][0]))) {
-                                fwrite(STDERR, "unknown command \"" . $operands['command'][0] . "\"\n");
-                                exit(1);
-                            }
+                            $command = array_reduce($operands['command'], function($cmd, $name) {
+                                static $list = [];
+                                
+                                $list[] = $name;
+                                
+                                if (!($command = $cmd->getCommand($name))) {
+                                    fwrite(STDERR, "unknown command \"" . implode(' -> ', $list) . "\"\n");
+                                    exit(1);
+                                }
+                                
+                                return $command;
+                            }, $this);
                         }
                         
                         $this->printHelp($command);

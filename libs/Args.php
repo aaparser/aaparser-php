@@ -104,15 +104,13 @@ class Args extends \Aaparser\Command
      *
      * @param   string              $command        Optional command to print help for.
      */
-    public function printHelp($command = null)
+    public function printHelp(\Aaparser\Command $command = null)
     {
-        if (is_null($command) || !$this->hasCommand($command)) {
-            $instance = $this;
-        } else {
-            $instance = $this->getCommand($command);
+        if (is_null($command)) {
+            $command = $this;
         }
 
-        \Aaparser\Help::printHelp($instance);
+        \Aaparser\Help::printHelp($command);
 
         exit(1);
     }
@@ -144,9 +142,16 @@ class Args extends \Aaparser\Command
                 [
                     'help' => 'Display help for a subcommand.',
                     'action' => function(array $options, array $operands) {
+                        $command = $this;
+                        
                         if (isset($operands['command'])) {
-                            // resolve actual command
+                            if (!($command = $this->getCommand($operands['command'][0]))) {
+                                fwrite(STDERR, "unknown command \"" . $operands['command'][0] . "\"\n");
+                                exit(1);
+                            }
                         }
+                        
+                        $this->printHelp($command);
                     }
                 ]
             );

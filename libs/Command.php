@@ -356,7 +356,7 @@ class Command {
 
                 ++$op;
 
-                $remaining = $this->getMinMaxRemaining($op);
+                $remaining = $this->getMinRemaining($op);
             }
 
             $cnt = (isset($ret[$name])

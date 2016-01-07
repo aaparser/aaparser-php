@@ -39,7 +39,11 @@ class Coercion
     /**
      * Build a key/value with values provided.
      */
-    public static function kv($value, array $collection = array()) {
+    public static function kv($value, array $collection = null) {
+        if (is_null($collection)) {
+            $collection = array();
+        }
+        
         $kv = explode('=', $value);
 
         $collection[$kv[0]] = $kv[1];

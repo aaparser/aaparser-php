@@ -263,7 +263,7 @@ class Option
     /**
      * Coerce value according to configured coercion function.
      *
-     * @param   mixed           $value          Optional value to set (ignored for 'type' == 'count' and 'type' == 'bool').
+     * @param   mixed           $value          Value to coerce according to defined coercion type.
      * @return  mixed                           Coerced value.
      */
     public function coerce($value)

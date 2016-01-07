@@ -86,10 +86,13 @@ class Operand
      * Set help text.
      *
      * @param   string          $str            Help text.
+     * @return  \Aaparser\Operand               Instance for method chaining.
      */
     public function setHelp($str)
     {
         $this->settings['help'] = $str;
+        
+        return $this;
     }
 
     /**
@@ -146,10 +149,13 @@ class Operand
      * Add a value validator. This has only effect for options that require a value.
      *
      * @param   callable        $cb             Validation callback.
+     * @return  \Aaparser\Operand               Instance for method chaining.
      */
     public function addValidator($cb)
     {
         $this->validators[] = $cb;
+        
+        return $this;
     }
 
     /**

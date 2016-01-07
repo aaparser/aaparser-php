@@ -108,10 +108,13 @@ class Option
      * Set help text.
      *
      * @param   string          $str            Help text.
+     * @return  \Aaparser\Operand               Instance for method chaining.
      */
     public function setHelp($str)
     {
         $this->settings['help'] = $str;
+        
+        return $this;
     }
 
     /**
@@ -158,10 +161,13 @@ class Option
      * Set action to call if option appears in arguments.
      *
      * @param   callable        $cb             Callback to call.
+     * @return  \Aaparser\Operand               Instance for method chaining.
      */
     public function setAction($cb)
     {
         $this->settings['action'] = $cb;
+        
+        return $this;
     }
 
     /**
@@ -178,10 +184,13 @@ class Option
      * Add a value validator. This has only effect for options that require a value.
      *
      * @param   callable        $cb             Validation callback.
+     * @return  \Aaparser\Operand               Instance for method chaining.
      */
     public function addValidator($cb)
     {
         $this->validators[] = $cb;
+        
+        return $this;
     }
 
     /**

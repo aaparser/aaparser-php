@@ -79,10 +79,13 @@ class Command {
      * Set help text.
      *
      * @param   string      $str            Help text.
+     * @return  \Aaparser\Operand           Instance for method chaining.
      */
     public function setHelp($str)
     {
         $this->settings['help'] = $str;
+        
+        return $this;
     }
 
     /**
@@ -121,10 +124,13 @@ class Command {
      * Set action to call if command appears in arguments.
      *
      * @param   callable    $cb             Callback to call.
+     * @return  \Aaparser\Operand           Instance for method chaining.
      */
     public function setAction(callable $cb)
     {
         $this->settings['action'] = $cb;
+        
+        return $this;
     }
 
     /**

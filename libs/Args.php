@@ -120,10 +120,13 @@ class Args extends \Aaparser\Command
      * error occured after argument processing.
      *
      * @param   callable            $fn             Function to call.
+     * @return  \Aaparser\Operand                   Instance for method chaining.
      */
     public function setDefaultAction(callable $fn)
     {
         $this->settings['default_action'] = $fn;
+        
+        return $this;
     }
 
     /**

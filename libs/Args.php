@@ -102,7 +102,7 @@ class Args extends \Aaparser\Command
     /**
      * Print help.
      *
-     * @param   string              $command        Optional command to print help for.
+     * @param   \Aaparser\Command           $command        Optional command to print help for.
      */
     public function printHelp(\Aaparser\Command $command = null)
     {

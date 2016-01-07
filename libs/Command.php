@@ -447,7 +447,7 @@ class Command {
                 if ($option->takesValue()) {
                     if (($arg = array_shift($args))) {
                         // value required
-                        list($is_valid, $errstr) = $option->isValid($arg);
+                        list($is_valid, $errstr) = $option->isValid($option->coerce($arg));
 
                         if (!$is_valid) {
                             printf("invalid value for argument \"%s\"\n", $match[1]);

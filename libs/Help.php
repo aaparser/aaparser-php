@@ -116,7 +116,7 @@ class Help
         } while (!is_null($cmd));
 
         $usage = self::getUsage($command);
-        $buffer = rtrim('usage: ' . array_shift($tree) . ' ' . implode(' [ARGUMENTS] ', $tree)) . ' ';
+        $buffer = rtrim('Usage: ' . array_shift($tree) . ' ' . implode(' [ARGUMENTS] ', $tree)) . ' ';
         $len = strlen($buffer);
 
         foreach ($usage as $u) {

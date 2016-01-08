@@ -105,9 +105,16 @@ class Help
      */
     public static function printHelp($command)
     {
+        $wrap = function() {
+        };
+        
         // render usage summary
         $cmd = $command;
         $tree = [];
+
+        if (($description = $command->getHelp()) !== '') {
+            print 'Command: ' . rtrim(wordwrap($command->getName() . ' -- ' . $description, 78, "\n    ")) . "\n\n";
+        }
 
         do {
             array_unshift($tree, $cmd->getName());

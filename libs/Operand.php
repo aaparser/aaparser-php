@@ -75,7 +75,7 @@ class Operand
         } elseif ($num == '?' || $num == '*' || $num == '+') {
             $this->num = $num;
         } else {
-            throw new \Exception('either an integer > 0 or one of the characters \'?\', \'*\' or \'+\' are required as first parameter. Input was: ' . $num);
+            throw new \Exception('either an integer > 0 or one of the characters \'?\', \'*\' or \'+\' are required as second parameter. Input was: ' . $num);
         }
 
         $this->name = $name;

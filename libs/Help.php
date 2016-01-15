@@ -155,9 +155,7 @@ class Help
             }
         }
 
-        if (strlen($buffer) > $len) {
-            print $buffer . "\n";
-        }
+        print $buffer . "\n";
 
         if (($description = $command->getDescription()) !== '') {
             print "\nDescription:\n" . rtrim(self::wordwrap($description, 78, 4)) . "\n";

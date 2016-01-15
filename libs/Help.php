@@ -21,7 +21,7 @@ class Help
 {
     /**
      * Wordwrap wrapper to handle paragraphs.
-     * 
+     *
      * @param   string              $str                    The input string.
      * @param   int                 $width                  The number of characters at which the string will be wrapped.
      * @param   string              $indent                 Indenting width.
@@ -30,14 +30,14 @@ class Help
     {
         $indent = str_repeat(' ', $indent);
         $paragraphs = [];
-        
+
         foreach (explode("\n", $str) as $paragraph) {
             $paragraphs[] = wordwrap($indent . $paragraph, $width, "\n" . $indent);
         }
-        
+
         return rtrim(implode("\n", $paragraphs));
     }
-    
+
     /**
      * Build usage information for options.
      */
@@ -129,7 +129,7 @@ class Help
         $tree = [];
 
         $help = $command->getHelp();
-        
+
         print "Command:\n    " . rtrim(wordwrap($command->getName() . ($help !== '' ? ' -- ' . $help : ''), 78, "\n    ")) . "\n\n";
 
         do {
@@ -139,9 +139,9 @@ class Help
         } while (!is_null($cmd));
 
         $usage = self::getUsage($command);
-        
+
         print "Usage:\n";
-        
+
         $buffer = rtrim('    ' . array_shift($tree) . ' ' . implode(' [ARGUMENTS] ', $tree)) . ' ';
         $len = strlen($buffer);
 
@@ -187,6 +187,8 @@ class Help
             }
         }
 
+        $example = $command->getExample();
+
         if ($command->hasCommands()) {
             print "\nCommands:\n";
 
@@ -209,8 +211,8 @@ class Help
                 printf("    %-" . $size . "s    %s\n", $name, $command->getHelp());
             }
         }
-        
-        if (($example = $command->getExample()) !== '') {
+
+        if ($example !== '') {
             print "\nExample:\n" . rtrim(self::wordwrap($example, 78, 4)) . "\n";
         }
     }

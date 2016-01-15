@@ -14,7 +14,7 @@ namespace Aaparser;
 /**
  * Command class.
  *
- * @copyright   copyright (c) 2015 by Harald Lapp
+ * @copyright   copyright (c) 2015-2016 by Harald Lapp
  * @author      Harald Lapp <harald@octris.org>
  */
 class Command {

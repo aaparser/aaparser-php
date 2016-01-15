@@ -125,7 +125,7 @@ class Args extends \Aaparser\Command
     public function setDefaultAction(callable $fn)
     {
         $this->settings['default_action'] = $fn;
-        
+
         return $this;
     }
 
@@ -138,7 +138,7 @@ class Args extends \Aaparser\Command
      */
     public function addCommand($name, array $settings = array())
     {
-        if ($name != 'help' && !$this->hasCommand($name)) {
+        if ($name != 'help' && !$this->hasCommand('help')) {
             // add implicit help command
             $cmd = parent::addCommand(
                 'help',
@@ -146,22 +146,22 @@ class Args extends \Aaparser\Command
                     'help' => 'Display help for a subcommand.',
                     'action' => function(array $options, array $operands) {
                         $command = $this;
-                        
+
                         if (isset($operands['command'])) {
                             $command = array_reduce($operands['command'], function($cmd, $name) {
                                 static $list = [];
-                                
+
                                 $list[] = $name;
-                                
+
                                 if (!($command = $cmd->getCommand($name))) {
                                     fwrite(STDERR, "unknown command \"" . implode(' -> ', $list) . "\"\n");
                                     exit(1);
                                 }
-                                
+
                                 return $command;
                             }, $this);
                         }
-                        
+
                         $this->printHelp($command);
                     }
                 ]

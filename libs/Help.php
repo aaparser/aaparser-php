@@ -20,6 +20,25 @@ namespace Aaparser;
 class Help
 {
     /**
+     * Wordwrap wrapper to handle paragraphs.
+     * 
+     * @param   string              $str                    The input string.
+     * @param   int                 $width                  The number of characters at which the string will be wrapped.
+     * @param   string              $indent                 Indenting width.
+     */
+    protected static function wordwrap($str, $width, $indent)
+    {
+        $indent = str_repeat(' ', $indent);
+        $paragraphs = [];
+        
+        foreach (explode("\n", $str) as $paragraph) {
+            $paragraphs[] = wordwrap($indent . $paragraph, $width, "\n" . $indent);
+        }
+        
+        return rtrim(implode("\n", $paragraphs));
+    }
+    
+    /**
      * Build usage information for options.
      */
     protected static function getOptionUsage($option)
@@ -105,16 +124,13 @@ class Help
      */
     public static function printHelp($command)
     {
-        $wrap = function() {
-        };
-        
         // render usage summary
         $cmd = $command;
         $tree = [];
 
-        if (($description = $command->getHelp()) !== '') {
-            print 'Command: ' . rtrim(wordwrap($command->getName() . ' -- ' . $description, 78, "\n    ")) . "\n\n";
-        }
+        $help = $command->getHelp();
+        
+        print "Command:\n    " . rtrim(wordwrap($command->getName() . ($help !== '' ? ' -- ' . $help : ''), 78, "\n    ")) . "\n\n";
 
         do {
             array_unshift($tree, $cmd->getName());
@@ -123,7 +139,10 @@ class Help
         } while (!is_null($cmd));
 
         $usage = self::getUsage($command);
-        $buffer = rtrim('Usage: ' . array_shift($tree) . ' ' . implode(' [ARGUMENTS] ', $tree)) . ' ';
+        
+        print "Usage:\n";
+        
+        $buffer = rtrim('    ' . array_shift($tree) . ' ' . implode(' [ARGUMENTS] ', $tree)) . ' ';
         $len = strlen($buffer);
 
         foreach ($usage as $u) {
@@ -138,6 +157,10 @@ class Help
 
         if (strlen($buffer) > $len) {
             print $buffer . "\n";
+        }
+
+        if (($description = $command->getDescription()) !== '') {
+            print "\nDescription:\n" . rtrim(self::wordwrap($description, 78, 4)) . "\n";
         }
 
         // render lists of available options, operands and subcommands
@@ -187,6 +210,10 @@ class Help
             foreach ($commands as $name => $command) {
                 printf("    %-" . $size . "s    %s\n", $name, $command->getHelp());
             }
+        }
+        
+        if (($example = $command->getExample()) !== '') {
+            print "\nExample:\n" . rtrim(self::wordwrap($example, 78, 4)) . "\n";
         }
     }
 }

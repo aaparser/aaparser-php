@@ -76,6 +76,56 @@ class Command {
     }
 
     /**
+     * Set longer command description.
+     *
+     * @param   string      $str            Description text.
+     * @return  \Aaparser\Command           Instance for method chaining.
+     */
+    public function setDescription($str)
+    {
+        $this->settings['description'] = $str;
+        
+        return $this;
+    }
+
+    /**
+     * Return description text.
+     *
+     * @return  string                      Description text.
+     */
+    public function getDescription()
+    {
+        return (isset($this->settings['description'])
+                ? $this->settings['description']
+                : '');
+    }
+
+    /**
+     * Set example.
+     *
+     * @param   string      $str            Example text.
+     * @return  \Aaparser\Command           Instance for method chaining.
+     */
+    public function setExample($str)
+    {
+        $this->settings['example'] = $str;
+        
+        return $this;
+    }
+
+    /**
+     * Return example text.
+     *
+     * @return  string                      Example text.
+     */
+    public function getExample()
+    {
+        return (isset($this->settings['example'])
+                ? $this->settings['example']
+                : '');
+    }
+
+    /**
      * Set help text.
      *
      * @param   string      $str            Help text.

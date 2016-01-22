@@ -70,7 +70,10 @@ class Command {
     public function __construct($name, $parent, array $settings = array())
     {
         $this->name = $name;
-        $this->settings = $settings;
+        $this->settings = array_merge(
+            ['default_action' => function() {}],
+            $settings
+        );
 
         $this->parent = $parent;
     }
@@ -84,7 +87,7 @@ class Command {
     public function setDescription($str)
     {
         $this->settings['description'] = $str;
-        
+
         return $this;
     }
 
@@ -109,7 +112,7 @@ class Command {
     public function setExample($str)
     {
         $this->settings['example'] = $str;
-        
+
         return $this;
     }
 
@@ -179,6 +182,20 @@ class Command {
     public function setAction(callable $cb)
     {
         $this->settings['action'] = $cb;
+
+        return $this;
+    }
+
+    /**
+     * Set default action that is called, when no command line arguments are privided and no
+     * error occured after argument processing.
+     *
+     * @param   callable            $cb             Function to call.
+     * @return  \Aaparser\Args                      Instance for method chaining.
+     */
+    public function setDefaultAction(callable $cb)
+    {
+        $this->settings['default_action'] = $cb;
 
         return $this;
     }
@@ -460,6 +477,8 @@ class Command {
         $literal = false;
         $subcommand = null;
 
+        $args_cnt = count($args);
+
         array_map(function($option) use (&$options) {
             $data = $option->getData();
 
@@ -572,6 +591,11 @@ class Command {
                     break;
                 }
             } while(true);
+        }
+
+        if ($args_cnt == 0) {
+            $fn = $this->settings['default_action'];
+            $fn();
         }
 
         return $args;

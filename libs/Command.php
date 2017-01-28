@@ -571,7 +571,7 @@ class Command {
         $operands = $this->processOperands($pargs);
 
         // action callback for command
-        if (isset($this->settings['action']) && is_callable($this->settings['action'])) {
+        if ($prevent_default = (isset($this->settings['action']) && is_callable($this->settings['action']))) {
             $this->settings['action']($options, $operands);
         }
 
@@ -591,9 +591,8 @@ class Command {
                     break;
                 }
             } while(true);
-        }
-
-        if ($args_cnt == 0) {
+        } else {
+            if ($args_cnt == 0 && !$prevent_default) {
             $fn = $this->settings['default_action'];
             $fn();
         }

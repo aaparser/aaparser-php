@@ -89,7 +89,7 @@ class Option
         $this->name = $name;
         $this->coercion = (is_callable($coercion)
                             ? $coercion
-                            : function($_, $_) use ($coercion) { return $coercion; });
+                            : function($_1, $_2) use ($coercion) { return $coercion; });
 
         foreach (preg_split('/[, |]+/', $flags) as $part) {
             if (preg_match('/^-[a-z0-9]$/i', $part)) {
